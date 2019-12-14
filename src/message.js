@@ -33,3 +33,13 @@ function checkLanguage(text) {
   var regexp = /[A-Za-z]+/;
   return (regexp.test(text) ? 'en' : 'ja');
 }
+
+function checkWeather() {
+  var url = 'http://weather.livedoor.com/forecast/webservice/json/v1?city=130010';
+  var response = UrlFetchApp.fetch(url);
+  var json = JSON.parse(response.getContentText());
+
+  Logger.log(json["title"]);
+  Logger.log(json["description"]);
+  Logger.log(json["forecasts"]);
+}
