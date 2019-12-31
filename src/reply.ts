@@ -28,4 +28,4 @@ const doPost = (e: any) => {
   UrlFetchApp.fetch(url, options);
   return ContentService.createTextOutput(JSON.stringify({content: "post ok"}))
   .setMimeType(ContentService.MimeType.JSON);
-}
+};
