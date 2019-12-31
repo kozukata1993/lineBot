@@ -1,12 +1,12 @@
 const doPost = (e: any) => {
-  const accessToken: string = PropertiesService.getScriptProperties().getProperty("ACCESS_TOKEN");
+  const lineAccessToken: string = PropertiesService.getScriptProperties().getProperty("LINE_ACCESS_TOKEN");
   const json = JSON.parse(e.postData.contents).events[0];
-  const replyTokens: string = json.replyToken;
+  const lineReplyToken: string = json.replyToken;
   const userMessage: string = json.message.text;
   const url: string = "https://api.line.me/v2/bot/message/reply";
 
   const replyHeaders = {
-    "Authorization": "Bearer " + accessToken,
+    "Authorization": "Bearer " + lineAccessToken,
     "Content-Type": "application/json; charset=UTF-8",
   };
 
@@ -16,7 +16,7 @@ const doPost = (e: any) => {
       // text: "Success!",
       type: "text",
     }],
-    replyToken: replyTokens,
+    replyToken: lineReplyToken,
   };
 
   const options: any = {
