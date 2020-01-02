@@ -46,11 +46,3 @@ const getAccessToken = () => {
   const tokens = serverToken.addUser(jsonKey.client_email).requestToken().getTokens();
   return tokens[jsonKey.client_email].token;
 };
-
-// function test() {
-//   const df = new Dialogflow("今日の天気教えて");
-//   Logger.log(df.postQuery());
-//   Logger.log(df.postQuery().parameters.request);
-//   Logger.log(df.postQuery().parameters.weather);
-//   Logger.log(df.postQuery().intent);
-// }

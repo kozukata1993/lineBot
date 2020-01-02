@@ -20,10 +20,10 @@ const doPost = (e: any) => {
   };
 
   const options: any = {
-      headers: replyHeaders,
-      method: "post",
-      payload: JSON.stringify(postDatas),
-    };
+    headers: replyHeaders,
+    method: "post",
+    payload: JSON.stringify(postDatas),
+  };
 
   UrlFetchApp.fetch(url, options);
   return ContentService.createTextOutput(JSON.stringify({content: "post ok"}))
