@@ -2,14 +2,15 @@ const makeReply = (userMessage: string): string => {
   if (userMessage === "ゴミ" || userMessage === "ごみ") {
     return makePushMessage();
   } else {
-    switch (checkLanguage(userMessage)) {
-      case "ja":
-        const enText: string = LanguageApp.translate(userMessage, "ja", "en");
-        return enText;
-      case "en":
-        const jaText: string = LanguageApp.translate(userMessage, "en", "ja");
-        return jaText;
-    }
+    // switch (checkLanguage(userMessage)) {
+    //   case "ja":
+    //     const enText: string = LanguageApp.translate(userMessage, "ja", "en");
+    //     return enText;
+    //   case "en":
+    //     const jaText: string = LanguageApp.translate(userMessage, "en", "ja");
+    //     return jaText;
+    // }
+    const df = new Dialogflow(userMessage);
   }
 };
 

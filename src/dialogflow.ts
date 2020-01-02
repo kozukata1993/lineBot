@@ -1,3 +1,6 @@
+const scriptProperties = PropertiesService.getScriptProperties();
+const dfUrlFormat: string = scriptProperties.getProperty("DF_URL_FORMAT");
+
 class Dialogflow {
   private sessionID: string;
   private message: string;
@@ -27,8 +30,6 @@ class Dialogflow {
       method: "POST",
       payload: JSON.stringify(body),
     };
-    const scriptProperties = PropertiesService.getScriptProperties();
-    const dfUrlFormat: string = scriptProperties.getProperty("DF_URL_FORMAT");
 
     const response = UrlFetchApp.fetch(dfUrlFormat.replace(/{{sessionID}}/g, this.sessionID), options);
     return JSON.parse(response.getContentText()).queryResult;
@@ -36,7 +37,7 @@ class Dialogflow {
 }
 
 const getAccessToken = () => {
-  const jsonKey = JSON.parse(PropertiesService.getScriptProperties().getProperty("GOOGLE_APPLICATION_CREDENTIALS"));
+  const jsonKey = JSON.parse(scriptProperties.getProperty("GOOGLE_APPLICATION_CREDENTIALS"));
   const serverToken = new GSApp.init(
     jsonKey.private_key,
     ["https://www.googleapis.com/auth/cloud-platform"],

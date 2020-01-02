@@ -3,23 +3,23 @@ const userId: string = PropertiesService.getScriptProperties().getProperty("MY_I
 
 const pushMessage = () => {
   const url: string = "https://api.line.me/v2/bot/message/push";
-  const headers: any = {
-    "Content-Type": "application/json; charset=UTF-8",
+  const pushHeaders = {
     "Authorization": "Bearer " + lineAccessToken,
+    "Content-Type": "application/json; charset=UTF-8",
   };
 
   const postDatas = {
-    "to": userId,
-    "messages": [{
-      "type": "text",
-      "text": makePushMessage(),
-    }]
+    messages: [{
+      text: makePushMessage(),
+      type: "text",
+    }],
+    to: userId,
   };
 
   const options: any = {
-    "headers": headers,
-    "method": "post",
-    "payload": JSON.stringify(postDatas)
+    headers: pushHeaders,
+    method: "post",
+    payload: JSON.stringify(postDatas)
   };
   UrlFetchApp.fetch(url, options);
 };
