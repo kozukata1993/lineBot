@@ -1,25 +1,25 @@
-const lineAccessToken: string = PropertiesService.getScriptProperties().getProperty('LINE_ACCESS_TOKEN');
-const userId: string = PropertiesService.getScriptProperties().getProperty('MY_ID');
-  
+const lineAccessToken: string = PropertiesService.getScriptProperties().getProperty("LINE_ACCESS_TOKEN");
+const userId: string = PropertiesService.getScriptProperties().getProperty("MY_ID");
+
 const pushMessage = () => {
-  const url: string = 'https://api.line.me/v2/bot/message/push';
+  const url: string = "https://api.line.me/v2/bot/message/push";
   const headers: any = {
-    'Content-Type': 'application/json; charset=UTF-8',
-    'Authorization': 'Bearer ' + lineAccessToken,
+    "Content-Type": "application/json; charset=UTF-8",
+    "Authorization": "Bearer " + lineAccessToken,
   };
 
   const postDatas = {
-    'to': userId,
-    'messages': [{
-      'type': 'text',
-      'text': makePushMessage(),
+    "to": userId,
+    "messages": [{
+      "type": "text",
+      "text": makePushMessage(),
     }]
   };
-  
+
   const options: any = {
-    'headers': headers,
-    'method': 'post',
-    'payload': JSON.stringify(postDatas)
+    "headers": headers,
+    "method": "post",
+    "payload": JSON.stringify(postDatas)
   };
   UrlFetchApp.fetch(url, options);
 };

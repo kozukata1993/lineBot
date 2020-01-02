@@ -7,7 +7,7 @@ class Dialogflow {
     this.message = message;
   }
 
-  public post() {
+  public postQuery() {
     const body: any = {
       queryInput: {
         text: {
@@ -31,7 +31,7 @@ class Dialogflow {
     const dfUrlFormat: string = scriptProperties.getProperty("DF_URL_FORMAT");
 
     const response = UrlFetchApp.fetch(dfUrlFormat.replace(/{{sessionID}}/g, this.sessionID), options);
-    return JSON.parse(response.getContentText()).queryResult.parameters;
+    return JSON.parse(response.getContentText()).queryResult;
   }
 }
 
@@ -48,6 +48,8 @@ const getAccessToken = () => {
 
 function test() {
   const df = new Dialogflow("今日の天気教えて");
-  Logger.log(df.post().request);
-  Logger.log(df.post().weather);
+  Logger.log(df.postQuery());
+  Logger.log(df.postQuery().parameters.request);
+  Logger.log(df.postQuery().parameters.weather);
+  Logger.log(df.postQuery().intent);
 }
