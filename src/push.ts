@@ -19,7 +19,7 @@ const pushMessage = () => {
   const options: any = {
     headers: pushHeaders,
     method: "post",
-    payload: JSON.stringify(postDatas)
+    payload: JSON.stringify(postDatas),
   };
   UrlFetchApp.fetch(url, options);
 };
