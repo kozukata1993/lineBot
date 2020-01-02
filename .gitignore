@@ -1,4 +1,5 @@
 .clasp.json
+*.js
 
 node_modules/
 .node_modules/

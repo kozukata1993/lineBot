@@ -1,11 +1,11 @@
-const accessToken: string = PropertiesService.getScriptProperties().getProperty('ACCESS_TOKEN');
+const lineAccessToken: string = PropertiesService.getScriptProperties().getProperty('LINE_ACCESS_TOKEN');
 const userId: string = PropertiesService.getScriptProperties().getProperty('MY_ID');
   
 const pushMessage = () => {
   const url: string = 'https://api.line.me/v2/bot/message/push';
   const headers: any = {
     'Content-Type': 'application/json; charset=UTF-8',
-    'Authorization': 'Bearer ' + accessToken,
+    'Authorization': 'Bearer ' + lineAccessToken,
   };
 
   const postDatas = {
