@@ -42,7 +42,13 @@ const checkLanguage = (text: string): string => {
 };
 
 const checkWeather = () => {
-  const url = "http://weather.livedoor.com/forecast/webservice/json/v1?city=130010";
+  const url: string = "http://weather.livedoor.com/forecast/webservice/json/v1?city=130010";
   const response = UrlFetchApp.fetch(url);
   const json = JSON.parse(response.getContentText());
+  return json;
 };
+
+function test() {
+  const df = new Dialogflow("今日の天気教えて");
+  Logger.log(df.postQuery().parameters.date);
+}
