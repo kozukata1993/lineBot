@@ -45,4 +45,4 @@ const checkWeather = () => {
   const url = "http://weather.livedoor.com/forecast/webservice/json/v1?city=130010";
   const response = UrlFetchApp.fetch(url);
   const json = JSON.parse(response.getContentText());
-}
+};
