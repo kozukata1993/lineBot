@@ -42,7 +42,7 @@ const getAccessToken = () => {
     jsonKey.private_key,
     ["https://www.googleapis.com/auth/cloud-platform"],
     jsonKey.client_email,
-    );
+  );
   const tokens = serverToken.addUser(jsonKey.client_email).requestToken().getTokens();
   return tokens[jsonKey.client_email].token;
 };
