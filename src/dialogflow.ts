@@ -5,7 +5,7 @@ class Dialogflow {
   private sessionID: string;
   private message: string;
 
-  constructor(message: string) {
+  public constructor(message: string) {
     this.sessionID = Math.random().toString(32).substring(2);
     this.message = message;
   }
