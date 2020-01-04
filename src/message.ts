@@ -4,9 +4,11 @@ const makeReply = (userMessage: string): string => {
   } else {
     const df = new Dialogflow(userMessage);
     const intent: string = df.postQuery().intent.displayName;
+    const date: Date = df.postQuery().parameters.date;
+
     switch (intent) {
       case "weather":
-        return "天気は後で教えるよ";
+        return forecasts(date);
       default:
         switch (checkLanguage(userMessage)) {
           case "ja":
@@ -41,14 +43,35 @@ const checkLanguage = (text: string): string => {
   return (regexp.test(text) ? "en" : "ja");
 };
 
-const checkWeather = () => {
+const forecasts = (date: Date = new Date()) => {
   const url: string = "http://weather.livedoor.com/forecast/webservice/json/v1?city=130010";
   const response = UrlFetchApp.fetch(url);
   const json = JSON.parse(response.getContentText());
-  return json;
+
+  let i: number = 0;
+  let result: string = "";
+  const today: Date = new Date();
+  const tomorrow: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  const dayAfterTomorrow: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+
+  switch (date) {
+    case today:
+      i = 0;
+      break;
+    case tomorrow:
+      i = 1;
+      break;
+    case dayAfterTomorrow:
+      i = 2;
+      break;
+    default:
+      result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}の天気はわからないよ`;
+      return result;
+  }
+
+  result = json.forecasts[i].telop;
 };
 
 function test() {
-  const df = new Dialogflow("今日の天気教えて");
-  Logger.log(df.postQuery().parameters.date);
+  Logger.log(forecasts());
 }
