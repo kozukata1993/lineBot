@@ -50,18 +50,22 @@ const forecasts = (date: Date = new Date()) => {
 
   let i: number = 0;
   let result: string = "";
-  const today: Date = new Date();
+
+  const today: Date  = new Date();
   const tomorrow: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
   const dayAfterTomorrow: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
 
-  switch (date) {
-    case today:
+  const todayString: string = Utilities.formatDate(today, "JST", "yyyyMMdd");
+  const tomorrowString: string = Utilities.formatDate(tomorrow, "JST", "yyyyMMdd");
+  const dayAfterTomorrowString: string = Utilities.formatDate(dayAfterTomorrow, "JST", "yyyyMMdd");
+  switch (Utilities.formatDate(date, "JST", "yyyyMMdd")) {
+    case todayString:
       i = 0;
       break;
-    case tomorrow:
+    case tomorrowString:
       i = 1;
       break;
-    case dayAfterTomorrow:
+    case dayAfterTomorrowString:
       i = 2;
       break;
     default:
@@ -69,7 +73,10 @@ const forecasts = (date: Date = new Date()) => {
       return result;
   }
 
-  result = json.forecasts[i].telop;
+  result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}の天気は${json.forecasts[i].telop}
+            最高気温は${json.forecasts[i].temperature.max}℃
+            最低気温は${json.forecasts[i].temperature.min}℃です`;
+  return result;
 };
 
 function test() {
