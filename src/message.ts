@@ -44,39 +44,40 @@ const checkLanguage = (text: string): string => {
 };
 
 const forecasts = (date: Date = new Date()) => {
-  const url: string = "http://weather.livedoor.com/forecast/webservice/json/v1?city=130010";
+  const url: string = PropertiesService.getScriptProperties().getProperty("DARK_SKY_URL");
   const response = UrlFetchApp.fetch(url);
   const json = JSON.parse(response.getContentText());
+  Logger.log(json);
 
-  let i: number = 0;
-  let result: string = "";
+  // let i: number = 0;
+  // let result: string = "";
 
-  const today: Date  = new Date();
-  const tomorrow: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-  const dayAfterTomorrow: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+  // const today: Date  = new Date();
+  // const tomorrow: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  // const dayAfterTomorrow: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
 
-  const todayString: string = Utilities.formatDate(today, "JST", "yyyyMMdd");
-  const tomorrowString: string = Utilities.formatDate(tomorrow, "JST", "yyyyMMdd");
-  const dayAfterTomorrowString: string = Utilities.formatDate(dayAfterTomorrow, "JST", "yyyyMMdd");
-  switch (Utilities.formatDate(date, "JST", "yyyyMMdd")) {
-    case todayString:
-      i = 0;
-      break;
-    case tomorrowString:
-      i = 1;
-      break;
-    case dayAfterTomorrowString:
-      i = 2;
-      break;
-    default:
-      result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}の天気はわからないよ`;
-      return result;
-  }
+  // const todayString: string = Utilities.formatDate(today, "JST", "yyyyMMdd");
+  // const tomorrowString: string = Utilities.formatDate(tomorrow, "JST", "yyyyMMdd");
+  // const dayAfterTomorrowString: string = Utilities.formatDate(dayAfterTomorrow, "JST", "yyyyMMdd");
+  // switch (Utilities.formatDate(date, "JST", "yyyyMMdd")) {
+  //   case todayString:
+  //     i = 0;
+  //     break;
+  //   case tomorrowString:
+  //     i = 1;
+  //     break;
+  //   case dayAfterTomorrowString:
+  //     i = 2;
+  //     break;
+  //   default:
+  //     result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}の天気はわからないよ`;
+  //     return result;
+  // }
 
-  result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}の天気は${json.forecasts[i].telop}
-            最高気温は${json.forecasts[i].temperature.max}℃
-            最低気温は${json.forecasts[i].temperature.min}℃です`;
-  return result;
+  // result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}の天気は${json.forecasts[i].telop}
+  //           最高気温は${json.forecasts[i].temperature.max}℃
+  //           最低気温は${json.forecasts[i].temperature.min}℃です`;
+  // return result;
 };
 
 function test() {
