@@ -1,24 +1,16 @@
 const makeReply = (userMessage: string): string => {
-  if (userMessage === "ゴミ" || userMessage === "ごみ") {
-    return makePushMessage();
-  } else {
-    const queryResult = (new Dialogflow(userMessage)).postQuery();
-    const intent: string = queryResult.intent.displayName;
-    const date: Date = createDate(queryResult.parameters.date);
+  const queryResult = (new Dialogflow(userMessage)).postQuery();
+  const intent: string = queryResult.intent.displayName;
+  const date: Date = createDate(queryResult.parameters.date);
 
-    switch (intent) {
-      case "weather":
-        return forecasts(date);
-      default:
-        switch (checkLanguage(userMessage)) {
-          case "ja":
-            const enText: string = LanguageApp.translate(userMessage, "ja", "en");
-            return enText;
-          case "en":
-            const jaText: string = LanguageApp.translate(userMessage, "en", "ja");
-            return jaText;
-        }
-    }
+  switch (intent) {
+    case "weather":
+      return forecasts(date);
+    case "trash":
+      return makePushMessage();
+    default:
+      const lngs: string[] = checkLanguage(userMessage);
+      return LanguageApp.translate(userMessage, lngs[0], lngs[1]);
   }
 };
 
@@ -38,9 +30,9 @@ const makePushMessage = (): string => {
   }
 };
 
-const checkLanguage = (text: string): string => {
+const checkLanguage = (text: string): string[] => {
   const regexp = /[A-Za-z]+/;
-  return (regexp.test(text) ? "en" : "ja");
+  return (regexp.test(text) ? ["en", "ja"] : ["ja", "en"]);
 };
 
 const forecasts = (date: Date = new Date()): string => {
@@ -71,8 +63,8 @@ const getDateIndex = (date: Date) => {
 };
 
 const createDate = (dateString: string) => {
-  const regExp = /\d{4}-\d{2}-\d{2}/g;
-  const tmpArray = dateString.match(regExp)[0].split("-");
+  const regexp = /\d{4}-\d{2}-\d{2}/g;
+  const tmpArray = dateString.match(regexp)[0].split("-");
   const dateArray: number[] = tmpArray.map((str) => +str);
   return new Date(dateArray[0], dateArray[1] - 1, dateArray[2]);
 };
