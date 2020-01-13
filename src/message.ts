@@ -2,9 +2,9 @@ const makeReply = (userMessage: string): string => {
   if (userMessage === "ゴミ" || userMessage === "ごみ") {
     return makePushMessage();
   } else {
-    const df = new Dialogflow(userMessage);
-    const intent: string = df.postQuery().intent.displayName;
-    const date: Date = df.postQuery().parameters.date;
+    const queryResult = (new Dialogflow(userMessage)).postQuery();
+    const intent: string = queryResult.intent.displayName;
+    const date: Date = queryResult.parameters.date;
 
     switch (intent) {
       case "weather":
@@ -43,43 +43,38 @@ const checkLanguage = (text: string): string => {
   return (regexp.test(text) ? "en" : "ja");
 };
 
-const forecasts = (date: Date = new Date()) => {
-  const url: string = PropertiesService.getScriptProperties().getProperty("DARK_SKY_URL");
-  const response = UrlFetchApp.fetch(url);
-  const json = JSON.parse(response.getContentText());
-  Logger.log(json);
+const forecasts = (date: Date = new Date()): string => {
+  let url: string = PropertiesService.getScriptProperties().getProperty("DARK_SKY_URL");
+  const latitude: string = "35.41";
+  const longitude: string = "139.45";
+  const queryParams = "?lang=ja&units=si&exclude=currently,minutely,hourly,alerts,flags";
+  url = `${url}${latitude},${longitude}${queryParams}`;
 
-  // let i: number = 0;
-  // let result: string = "";
+  const json = JSON.parse(UrlFetchApp.fetch(url).getContentText());
+  const dateIndex: number = getDateIndex(date);
+  const forecast = json.daily.data[dateIndex];
+  let result: string =
+    `${Utilities.formatDate(date, "JST", "MM/dd(E)")}は${forecast.summary}
+    最高気温は${forecast.temperatureMax}℃
+    最低気温は${forecast.temperatureLow}℃
+    の見込みです。`;
 
-  // const today: Date  = new Date();
-  // const tomorrow: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-  // const dayAfterTomorrow: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+  if (dateIndex === 8) {
+    result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}の天気はわからないよ。`;
+  }
+  Logger.log(result);
+  return result;
+};
 
-  // const todayString: string = Utilities.formatDate(today, "JST", "yyyyMMdd");
-  // const tomorrowString: string = Utilities.formatDate(tomorrow, "JST", "yyyyMMdd");
-  // const dayAfterTomorrowString: string = Utilities.formatDate(dayAfterTomorrow, "JST", "yyyyMMdd");
-  // switch (Utilities.formatDate(date, "JST", "yyyyMMdd")) {
-  //   case todayString:
-  //     i = 0;
-  //     break;
-  //   case tomorrowString:
-  //     i = 1;
-  //     break;
-  //   case dayAfterTomorrowString:
-  //     i = 2;
-  //     break;
-  //   default:
-  //     result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}の天気はわからないよ`;
-  //     return result;
-  // }
-
-  // result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}の天気は${json.forecasts[i].telop}
-  //           最高気温は${json.forecasts[i].temperature.max}℃
-  //           最低気温は${json.forecasts[i].temperature.min}℃です`;
-  // return result;
+const getDateIndex = (date: Date) => {
+  const today = new Date();
+  const a = today.getFullYear() * 366 + (today.getMonth() + 1) * 31 + today.getDate();
+  const b = date.getFullYear() * 366 + (date.getMonth() + 1) * 31 + date.getDate();
+  return (b - a >= 0 && b - a <= 7) ? b - a : 8;
 };
 
 function test() {
-  Logger.log(forecasts());
+  const queryResult = (new Dialogflow("今日の天気教えて")).postQuery();
+  const intent: string = queryResult.intent.displayName;
+  const date: Date = queryResult.parameters.date;
 }
