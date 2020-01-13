@@ -4,10 +4,10 @@ const makeReply = (userMessage: string): string => {
   const date: Date = createDate(queryResult.parameters.date);
 
   switch (intent) {
-    case "weather":
-      return forecasts(date);
     case "trash":
       return makePushMessage();
+    case "weather":
+      return forecasts(date);
     default:
       const lngs: string[] = checkLanguage(userMessage);
       return LanguageApp.translate(userMessage, lngs[0], lngs[1]);
@@ -62,8 +62,8 @@ const getDateIndex = (date: Date) => {
   return (b - a >= 0 && b - a <= 7) ? b - a : 8;
 };
 
-const createDate = (dateString: string) => {
-  const regexp = /\d{4}-\d{2}-\d{2}/g;
+const createDate = (dateString: string = `${(new Date()).getFullYear()}-${(new Date()).getMonth() + 1}-${(new Date()).getDate()}`) => {
+  const regexp = /\d{4}-\d{1,2}-\d{1,2}/g;
   const tmpArray = dateString.match(regexp)[0].split("-");
   const dateArray: number[] = tmpArray.map((str) => +str);
   return new Date(dateArray[0], dateArray[1] - 1, dateArray[2]);
