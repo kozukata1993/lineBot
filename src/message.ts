@@ -4,7 +4,7 @@ const makeReply = (userMessage: string): string => {
   } else {
     const queryResult = (new Dialogflow(userMessage)).postQuery();
     const intent: string = queryResult.intent.displayName;
-    const date: Date = queryResult.parameters.date;
+    const date: Date = createDate(queryResult.parameters.date);
 
     switch (intent) {
       case "weather":
@@ -53,16 +53,13 @@ const forecasts = (date: Date = new Date()): string => {
   const json = JSON.parse(UrlFetchApp.fetch(url).getContentText());
   const dateIndex: number = getDateIndex(date);
   const forecast = json.daily.data[dateIndex];
-  let result: string =
-    `${Utilities.formatDate(date, "JST", "MM/dd(E)")}は${forecast.summary}
-    最高気温は${forecast.temperatureMax}℃
-    最低気温は${forecast.temperatureLow}℃
-    の見込みです。`;
+  let result: string = "";
 
   if (dateIndex === 8) {
     result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}の天気はわからないよ。`;
+  } else {
+    result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}は${forecast.summary}\n最高気温は${forecast.temperatureMax}℃\n最低気温は${forecast.temperatureLow}℃\nの見込みです。`;
   }
-  Logger.log(result);
   return result;
 };
 
@@ -73,8 +70,9 @@ const getDateIndex = (date: Date) => {
   return (b - a >= 0 && b - a <= 7) ? b - a : 8;
 };
 
-function test() {
-  const queryResult = (new Dialogflow("今日の天気教えて")).postQuery();
-  const intent: string = queryResult.intent.displayName;
-  const date: Date = queryResult.parameters.date;
-}
+const createDate = (dateString: string) => {
+  const regExp = /\d{4}-\d{2}-\d{2}/g;
+  const tmpArray = dateString.match(regExp)[0].split("-");
+  const dateArray: number[] = tmpArray.map((str) => +str);
+  return new Date(dateArray[0], dateArray[1] - 1, dateArray[2]);
+};
