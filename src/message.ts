@@ -1,4 +1,4 @@
-const makeReply = (userMessage: string): string => {
+const createReply = (userMessage: string): string => {
   const queryResult = (new Dialogflow(userMessage)).postQuery();
   const intent: string = queryResult.intent.displayName;
   const date: Date = createDate(queryResult.parameters.date);
@@ -14,7 +14,7 @@ const makeReply = (userMessage: string): string => {
   }
 };
 
-const makePushMessage = (): string => {
+const createPushMessage = (): string => {
   const today: Date = new Date();
   const day: string = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][today.getDay()];
   const date: number = today.getDate();
@@ -31,8 +31,7 @@ const makePushMessage = (): string => {
 };
 
 const checkLanguage = (text: string): string[] => {
-  const regexp = /[A-Za-z]+/;
-  return (regexp.test(text) ? ["en", "ja"] : ["ja", "en"]);
+  return (/[A-Za-z]+/.test(text) ? ["en", "ja"] : ["ja", "en"]);
 };
 
 const forecasts = (date: Date = new Date()): string => {
