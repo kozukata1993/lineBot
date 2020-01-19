@@ -5,7 +5,7 @@ const createReply = (userMessage: string): string => {
 
   switch (intent) {
     case "trash":
-      return makePushMessage();
+      return createPushMessage();
     case "weather":
       return forecasts(date);
     default:
