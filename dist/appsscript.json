@@ -1,0 +1,17 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "GSApp",
+        "libraryId": "1wkfv_Mm0IyruEZyPZsrctcSmc1T9y0-bArl2gIzMd6RVYJAwWeJ5gpDu",
+        "version": "8"
+      }
+    ]
+  },
+  "webapp": {
+    "access": "ANYONE_ANONYMOUS",
+    "executeAs": "USER_DEPLOYING"
+  },
+  "exceptionLogging": "STACKDRIVER"
+}

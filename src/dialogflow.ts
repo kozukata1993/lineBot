@@ -1,5 +1,6 @@
 const scriptProperties = PropertiesService.getScriptProperties();
 const dfUrlFormat: string = scriptProperties.getProperty("DF_URL_FORMAT");
+declare const GSApp: any;
 
 class Dialogflow {
   private sessionID: string;
