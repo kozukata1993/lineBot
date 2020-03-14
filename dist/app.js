@@ -1,4 +1,6 @@
-function myFunction() {
+function doPost(e) {
+}
+function pushNotice() {
 }/******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -122,14 +124,210 @@ module.exports = g;
 /*!**********************!*\
   !*** ./src/index.ts ***!
   \**********************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {global.myFunction = () => {
-    Logger.log("Other function");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _reply__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./reply */ "./src/reply.ts");
+/* harmony import */ var _push__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./push */ "./src/push.ts");
+
+
+global.doPost = (e) => {
+    Object(_reply__WEBPACK_IMPORTED_MODULE_0__["reply"])(e);
+};
+global.pushNotice = () => {
+    Object(_push__WEBPACK_IMPORTED_MODULE_1__["pushMessage"])();
 };
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node_modules/webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
+/***/ "./src/message.ts":
+/*!************************!*\
+  !*** ./src/message.ts ***!
+  \************************/
+/*! exports provided: createReply, createPushMessage */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createReply", function() { return createReply; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createPushMessage", function() { return createPushMessage; });
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils/utils */ "./src/utils/utils.ts");
+
+const createReply = (userMessage) => {
+    // const queryResult = new Dialogflow(userMessage).postQuery();
+    // const intent: string = queryResult.intent.displayName;
+    // const date: Date = createDate(queryResult.parameters.date);
+    const lngs = Object(_utils_utils__WEBPACK_IMPORTED_MODULE_0__["checkLanguage"])(userMessage);
+    Logger.log("1");
+    return LanguageApp.translate(userMessage, lngs[0], lngs[1]);
+    // switch (intent) {
+    //   case "trash":
+    //     return createPushMessage();
+    //   case "weather":
+    //     return forecasts(date);
+    //   default:
+    //     Logger.log("2");
+    //     return LanguageApp.translate(userMessage, lngs[0], lngs[1]);
+    // }
+};
+const createPushMessage = () => {
+    const today = new Date();
+    const day = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][today.getDay()];
+    const date = today.getDate();
+    if (day === "tue" || day === "fri") {
+        return "今日は燃えるゴミの日だよ";
+    }
+    else if (day === "sat") {
+        return "今日は資源ゴミの日だよ";
+    }
+    else if ((day === "thu" && date >= 8 && date <= 14) ||
+        (day === "thu" && date >= 22 && date <= 28)) {
+        return "今日はペットボトルを捨てる日だよ";
+    }
+    else {
+        return "今日はゴミを捨てる日じゃないよ";
+    }
+};
+
+
+/***/ }),
+
+/***/ "./src/push.ts":
+/*!*********************!*\
+  !*** ./src/push.ts ***!
+  \*********************/
+/*! exports provided: pushMessage */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pushMessage", function() { return pushMessage; });
+/* harmony import */ var _message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./message */ "./src/message.ts");
+
+const accessToken = PropertiesService.getScriptProperties().getProperty("LINE_ACCESS_TOKEN");
+const userId = PropertiesService.getScriptProperties().getProperty("MY_ID");
+const pushMessage = () => {
+    const url = "https://api.line.me/v2/bot/message/push";
+    const headers = {
+        Authorization: "Bearer " + accessToken,
+        "Content-Type": "application/json; charset=UTF-8",
+    };
+    const postDatas = {
+        messages: [
+            {
+                text: Object(_message__WEBPACK_IMPORTED_MODULE_0__["createPushMessage"])(),
+                type: "text",
+            },
+        ],
+        to: userId,
+    };
+    const options = {
+        headers,
+        method: "POST",
+        payload: JSON.stringify(postDatas),
+    };
+    UrlFetchApp.fetch(url, options);
+};
+
+
+/***/ }),
+
+/***/ "./src/reply.ts":
+/*!**********************!*\
+  !*** ./src/reply.ts ***!
+  \**********************/
+/*! exports provided: reply */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reply", function() { return reply; });
+/* harmony import */ var _message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./message */ "./src/message.ts");
+
+const reply = (e) => {
+    const accessToken = PropertiesService.getScriptProperties().getProperty("LINE_ACCESS_TOKEN");
+    const json = JSON.parse(e.postData.contents).events[0];
+    const replyToken = json.replyToken;
+    const userMessage = json.message.text;
+    const url = "https://api.line.me/v2/bot/message/reply";
+    const headers = {
+        Authorization: "Bearer " + accessToken,
+        "Content-Type": "application/json; charset=UTF-8",
+    };
+    const postDatas = {
+        messages: [
+            {
+                text: Object(_message__WEBPACK_IMPORTED_MODULE_0__["createReply"])(userMessage),
+                // text: `${userMessage}!!`,
+                type: "text",
+            },
+        ],
+        replyToken,
+    };
+    const options = {
+        headers,
+        method: "POST",
+        payload: JSON.stringify(postDatas),
+    };
+    UrlFetchApp.fetch(url, options);
+    return ContentService.createTextOutput(JSON.stringify({ content: "post ok" })).setMimeType(ContentService.MimeType.JSON);
+};
+
+
+/***/ }),
+
+/***/ "./src/utils/utils.ts":
+/*!****************************!*\
+  !*** ./src/utils/utils.ts ***!
+  \****************************/
+/*! exports provided: forecasts, getDateIndex, createDate, checkLanguage */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "forecasts", function() { return forecasts; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDateIndex", function() { return getDateIndex; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDate", function() { return createDate; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "checkLanguage", function() { return checkLanguage; });
+const forecasts = (date = new Date()) => {
+    let url = PropertiesService.getScriptProperties().getProperty("DARK_SKY_URL");
+    const latitude = "35.41";
+    const longitude = "139.45";
+    const queryParams = "?lang=ja&units=si&exclude=currently,minutely,hourly,alerts,flags";
+    url = `${url}${latitude},${longitude}${queryParams}`;
+    const json = JSON.parse(UrlFetchApp.fetch(url).getContentText());
+    const dateIndex = getDateIndex(date);
+    const forecast = json.daily.data[dateIndex];
+    let result = "";
+    if (dateIndex === 8) {
+        result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}の天気はわからないよ。`;
+    }
+    else {
+        result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}は${forecast.summary}\n最高気温は${forecast.temperatureMax}℃\n最低気温は${forecast.temperatureLow}℃\nの見込みです。`;
+    }
+    return result;
+};
+const getDateIndex = (date) => {
+    const today = new Date();
+    const a = today.getFullYear() * 366 + (today.getMonth() + 1) * 31 + today.getDate();
+    const b = date.getFullYear() * 366 + (date.getMonth() + 1) * 31 + date.getDate();
+    return b - a >= 0 && b - a <= 7 ? b - a : 8;
+};
+const createDate = (dateString = `${new Date().getFullYear()}-${new Date().getMonth() +
+    1}-${new Date().getDate()}`) => {
+    const regexp = /\d{4}-\d{1,2}-\d{1,2}/g;
+    const tmpArray = dateString.match(regexp)[0].split("-");
+    const dateArray = tmpArray.map(str => +str);
+    return new Date(dateArray[0], dateArray[1] - 1, dateArray[2]);
+};
+const checkLanguage = (text) => {
+    return /[A-Za-z]+/.test(text) ? ["en", "ja"] : ["ja", "en"];
+};
+
 
 /***/ })
 
