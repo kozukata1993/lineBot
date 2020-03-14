@@ -5,22 +5,29 @@ module.exports = {
   mode: "development",
   devtool: "none",
   entry: {
-    app: "./src/index.ts"
+    app: "./src/index.ts",
   },
   output: {
-    filename: "[name].js"
+    path: path.resolve(__dirname, "dist"),
+    filename: "[name].js",
   },
   module: {
     rules: [
       {
         test: /\.ts$/,
         exclude: /node_modules/,
-        use: ["ts-loader"]
-      }
-    ]
+        loader: "ts-loader",
+      },
+      {
+        enforce: "pre",
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        loader: "eslint-loader",
+      },
+    ],
   },
   plugins: [new GasPlugin()],
   resolve: {
-    extensions: [".ts"]
-  }
+    extensions: [".ts", ".js"],
+  },
 };

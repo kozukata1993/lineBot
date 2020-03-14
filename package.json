@@ -1,19 +1,33 @@
 {
-  "name": "gas-webpack-boilerplate",
+  "name": "line-bot",
   "version": "1.0.0",
-  "repository": "https://github.com/kozukata1993/gas-webpack-boilerplate.git",
   "author": "kozukata1993",
   "license": "MIT",
   "scripts": {
+    "lint": "yarn eslint --fix ./src/*.ts",
+    "test": "jest",
     "dev": "yarn webpack",
     "build": "yarn webpack && clasp push"
   },
   "devDependencies": {
-    "@types/google-apps-script": "^1.0.10",
-    "gas-webpack-plugin": "^1.0.2",
-    "ts-loader": "^6.2.1",
-    "typescript": "^3.8.3",
-    "webpack": "^4.42.0",
-    "webpack-cli": "^3.3.11"
+    "@types/google-apps-script": "1.0.11",
+    "@types/jest": "25.1.4",
+    "@types/node": "13.9.1",
+    "@typescript-eslint/eslint-plugin": "2.23.0",
+    "@typescript-eslint/parser": "2.23.0",
+    "dialogflow": "1.2.0",
+    "eslint": "6.8.0",
+    "eslint-config-prettier": "6.10.0",
+    "eslint-loader": "3.0.3",
+    "eslint-plugin-prettier": "3.1.2",
+    "gas-webpack-plugin": "1.0.2",
+    "jest": "25.1.0",
+    "lodash": "4.17.15",
+    "prettier": "1.19.1",
+    "ts-jest": "25.2.1",
+    "ts-loader": "6.2.1",
+    "typescript": "3.8.3",
+    "webpack": "4.42.0",
+    "webpack-cli": "3.3.11"
   }
 }
