@@ -1,6 +1,8 @@
 function doPost(e) {
 }
 function pushNotice() {
+}
+function testFunction() {
 }/******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -120,6 +122,64 @@ module.exports = g;
 
 /***/ }),
 
+/***/ "./src/dialogflow.ts":
+/*!***************************!*\
+  !*** ./src/dialogflow.ts ***!
+  \***************************/
+/*! exports provided: Dialogflow */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Dialogflow", function() { return Dialogflow; });
+var scriptProperties = PropertiesService.getScriptProperties();
+var dfUrlFormat = scriptProperties.getProperty("DF_URL_FORMAT");
+var Dialogflow = /** @class */ (function () {
+    function Dialogflow(message) {
+        this.sessionID = Math.random()
+            .toString(32)
+            .substring(2);
+        this.message = message;
+    }
+    Dialogflow.prototype.postQuery = function () {
+        var body = {
+            queryInput: {
+                text: {
+                    languageCode: "ja",
+                    text: this.message,
+                },
+            },
+            queryParams: {
+                timeZone: "Asia/Tokyo",
+            },
+        };
+        var options = {
+            contentType: "application/json; charset=utf-8",
+            headers: {
+                Authorization: "Bearer " + getAccessToken(),
+            },
+            method: "POST",
+            payload: JSON.stringify(body),
+        };
+        var response = UrlFetchApp.fetch(dfUrlFormat.replace(/{{sessionID}}/g, this.sessionID), options);
+        return JSON.parse(response.getContentText()).queryResult;
+    };
+    return Dialogflow;
+}());
+
+var getAccessToken = function () {
+    var jsonKey = JSON.parse(scriptProperties.getProperty("GOOGLE_APPLICATION_CREDENTIALS"));
+    var serverToken = new GSApp.init(jsonKey.private_key, ["https://www.googleapis.com/auth/cloud-platform"], jsonKey.client_email);
+    var tokens = serverToken
+        .addUser(jsonKey.client_email)
+        .requestToken()
+        .getTokens();
+    return tokens[jsonKey.client_email].token;
+};
+
+
+/***/ }),
+
 /***/ "./src/index.ts":
 /*!**********************!*\
   !*** ./src/index.ts ***!
@@ -131,13 +191,18 @@ module.exports = g;
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _reply__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./reply */ "./src/reply.ts");
 /* harmony import */ var _push__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./push */ "./src/push.ts");
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils/utils */ "./src/utils/utils.ts");
 
 
-global.doPost = (e) => {
+
+global.doPost = function (e) {
     Object(_reply__WEBPACK_IMPORTED_MODULE_0__["reply"])(e);
 };
-global.pushNotice = () => {
+global.pushNotice = function () {
     Object(_push__WEBPACK_IMPORTED_MODULE_1__["pushMessage"])();
+};
+global.testFunction = function () {
+    Object(_utils_utils__WEBPACK_IMPORTED_MODULE_2__["forecasts"])();
 };
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node_modules/webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
@@ -156,28 +221,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createReply", function() { return createReply; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createPushMessage", function() { return createPushMessage; });
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils/utils */ "./src/utils/utils.ts");
+/* harmony import */ var _dialogflow__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dialogflow */ "./src/dialogflow.ts");
 
-const createReply = (userMessage) => {
-    // const queryResult = new Dialogflow(userMessage).postQuery();
-    // const intent: string = queryResult.intent.displayName;
-    // const date: Date = createDate(queryResult.parameters.date);
-    const lngs = Object(_utils_utils__WEBPACK_IMPORTED_MODULE_0__["checkLanguage"])(userMessage);
-    Logger.log("1");
-    return LanguageApp.translate(userMessage, lngs[0], lngs[1]);
-    // switch (intent) {
-    //   case "trash":
-    //     return createPushMessage();
-    //   case "weather":
-    //     return forecasts(date);
-    //   default:
-    //     Logger.log("2");
-    //     return LanguageApp.translate(userMessage, lngs[0], lngs[1]);
-    // }
+
+var createReply = function (userMessage) {
+    var queryResult = new _dialogflow__WEBPACK_IMPORTED_MODULE_1__["Dialogflow"](userMessage).postQuery();
+    var intent = queryResult.intent.displayName;
+    var date = Object(_utils_utils__WEBPACK_IMPORTED_MODULE_0__["createDate"])(queryResult.parameters.date);
+    var lngs = Object(_utils_utils__WEBPACK_IMPORTED_MODULE_0__["checkLanguage"])(userMessage);
+    // return LanguageApp.translate(userMessage, lngs[0], lngs[1]);
+    switch (intent) {
+        case "trash":
+            return createPushMessage();
+        case "weather":
+            return Object(_utils_utils__WEBPACK_IMPORTED_MODULE_0__["forecasts"])(date);
+        default:
+            return LanguageApp.translate(userMessage, lngs[0], lngs[1]);
+    }
 };
-const createPushMessage = () => {
-    const today = new Date();
-    const day = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][today.getDay()];
-    const date = today.getDate();
+var createPushMessage = function () {
+    var today = new Date();
+    var day = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][today.getDay()];
+    var date = today.getDate();
     if (day === "tue" || day === "fri") {
         return "今日は燃えるゴミの日だよ";
     }
@@ -208,15 +273,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pushMessage", function() { return pushMessage; });
 /* harmony import */ var _message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./message */ "./src/message.ts");
 
-const accessToken = PropertiesService.getScriptProperties().getProperty("LINE_ACCESS_TOKEN");
-const userId = PropertiesService.getScriptProperties().getProperty("MY_ID");
-const pushMessage = () => {
-    const url = "https://api.line.me/v2/bot/message/push";
-    const headers = {
+var accessToken = PropertiesService.getScriptProperties().getProperty("LINE_ACCESS_TOKEN");
+var userId = PropertiesService.getScriptProperties().getProperty("MY_ID");
+var pushMessage = function () {
+    var url = "https://api.line.me/v2/bot/message/push";
+    var headers = {
         Authorization: "Bearer " + accessToken,
         "Content-Type": "application/json; charset=UTF-8",
     };
-    const postDatas = {
+    var postDatas = {
         messages: [
             {
                 text: Object(_message__WEBPACK_IMPORTED_MODULE_0__["createPushMessage"])(),
@@ -225,8 +290,8 @@ const pushMessage = () => {
         ],
         to: userId,
     };
-    const options = {
-        headers,
+    var options = {
+        headers: headers,
         method: "POST",
         payload: JSON.stringify(postDatas),
     };
@@ -248,17 +313,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reply", function() { return reply; });
 /* harmony import */ var _message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./message */ "./src/message.ts");
 
-const reply = (e) => {
-    const accessToken = PropertiesService.getScriptProperties().getProperty("LINE_ACCESS_TOKEN");
-    const json = JSON.parse(e.postData.contents).events[0];
-    const replyToken = json.replyToken;
-    const userMessage = json.message.text;
-    const url = "https://api.line.me/v2/bot/message/reply";
-    const headers = {
+var reply = function (e) {
+    var accessToken = PropertiesService.getScriptProperties().getProperty("LINE_ACCESS_TOKEN");
+    var json = JSON.parse(e.postData.contents).events[0];
+    var replyToken = json.replyToken;
+    var userMessage = json.message.text;
+    var url = "https://api.line.me/v2/bot/message/reply";
+    var headers = {
         Authorization: "Bearer " + accessToken,
         "Content-Type": "application/json; charset=UTF-8",
     };
-    const postDatas = {
+    var postDatas = {
         messages: [
             {
                 text: Object(_message__WEBPACK_IMPORTED_MODULE_0__["createReply"])(userMessage),
@@ -266,10 +331,10 @@ const reply = (e) => {
                 type: "text",
             },
         ],
-        replyToken,
+        replyToken: replyToken,
     };
-    const options = {
-        headers,
+    var options = {
+        headers: headers,
         method: "POST",
         payload: JSON.stringify(postDatas),
     };
@@ -293,38 +358,43 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDateIndex", function() { return getDateIndex; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDate", function() { return createDate; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "checkLanguage", function() { return checkLanguage; });
-const forecasts = (date = new Date()) => {
-    let url = PropertiesService.getScriptProperties().getProperty("DARK_SKY_URL");
-    const latitude = "35.41";
-    const longitude = "139.45";
-    const queryParams = "?lang=ja&units=si&exclude=currently,minutely,hourly,alerts,flags";
-    url = `${url}${latitude},${longitude}${queryParams}`;
-    const json = JSON.parse(UrlFetchApp.fetch(url).getContentText());
-    const dateIndex = getDateIndex(date);
-    const forecast = json.daily.data[dateIndex];
-    let result = "";
+var forecasts = function (date) {
+    if (date === void 0) { date = new Date(); }
+    // Logger.log(date);
+    var url = PropertiesService.getScriptProperties().getProperty("DARK_SKY_URL");
+    var latitude = "35.41";
+    var longitude = "139.45";
+    var queryParams = "?lang=ja&units=si&exclude=currently,minutely,hourly,alerts,flags";
+    url = "" + url + latitude + "," + longitude + queryParams;
+    var json = JSON.parse(UrlFetchApp.fetch(url).getContentText());
+    var dateIndex = getDateIndex(date);
+    // Logger.log(dateIndex);
+    var forecast = json.daily.data[dateIndex];
+    Logger.log(forecast);
+    var result = "";
     if (dateIndex === 8) {
-        result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}の天気はわからないよ。`;
+        result = Utilities.formatDate(date, "JST", "MM/dd(E)") + "\u306E\u5929\u6C17\u306F\u308F\u304B\u3089\u306A\u3044\u3088\u3002";
     }
     else {
-        result = `${Utilities.formatDate(date, "JST", "MM/dd(E)")}は${forecast.summary}\n最高気温は${forecast.temperatureMax}℃\n最低気温は${forecast.temperatureLow}℃\nの見込みです。`;
+        result = Utilities.formatDate(date, "JST", "MM/dd(E)") + "\u306F" + forecast.summary + "\n\u6700\u9AD8\u6C17\u6E29\u306F" + forecast.temperatureMax + "\u2103\n\u6700\u4F4E\u6C17\u6E29\u306F" + forecast.temperatureLow + "\u2103\n\u306E\u898B\u8FBC\u307F\u3067\u3059\u3002";
     }
     return result;
 };
-const getDateIndex = (date) => {
-    const today = new Date();
-    const a = today.getFullYear() * 366 + (today.getMonth() + 1) * 31 + today.getDate();
-    const b = date.getFullYear() * 366 + (date.getMonth() + 1) * 31 + date.getDate();
+var getDateIndex = function (date) {
+    var today = new Date();
+    var a = today.getFullYear() * 366 + (today.getMonth() + 1) * 31 + today.getDate();
+    var b = date.getFullYear() * 366 + (date.getMonth() + 1) * 31 + date.getDate();
     return b - a >= 0 && b - a <= 7 ? b - a : 8;
 };
-const createDate = (dateString = `${new Date().getFullYear()}-${new Date().getMonth() +
-    1}-${new Date().getDate()}`) => {
-    const regexp = /\d{4}-\d{1,2}-\d{1,2}/g;
-    const tmpArray = dateString.match(regexp)[0].split("-");
-    const dateArray = tmpArray.map(str => +str);
+var createDate = function (dateString) {
+    if (dateString === void 0) { dateString = new Date().getFullYear() + "-" + (new Date().getMonth() +
+        1) + "-" + new Date().getDate(); }
+    var regexp = /\d{4}-\d{1,2}-\d{1,2}/g;
+    var tmpArray = dateString.match(regexp)[0].split("-");
+    var dateArray = tmpArray.map(function (str) { return +str; });
     return new Date(dateArray[0], dateArray[1] - 1, dateArray[2]);
 };
-const checkLanguage = (text) => {
+var checkLanguage = function (text) {
     return /[A-Za-z]+/.test(text) ? ["en", "ja"] : ["ja", "en"];
 };
 
