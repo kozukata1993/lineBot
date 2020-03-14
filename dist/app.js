@@ -360,7 +360,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "checkLanguage", function() { return checkLanguage; });
 var forecasts = function (date) {
     if (date === void 0) { date = new Date(); }
-    // Logger.log(date);
     var url = PropertiesService.getScriptProperties().getProperty("DARK_SKY_URL");
     var latitude = "35.41";
     var longitude = "139.45";
@@ -368,9 +367,7 @@ var forecasts = function (date) {
     url = "" + url + latitude + "," + longitude + queryParams;
     var json = JSON.parse(UrlFetchApp.fetch(url).getContentText());
     var dateIndex = getDateIndex(date);
-    // Logger.log(dateIndex);
     var forecast = json.daily.data[dateIndex];
-    Logger.log(forecast);
     var result = "";
     if (dateIndex === 8) {
         result = Utilities.formatDate(date, "JST", "MM/dd(E)") + "\u306E\u5929\u6C17\u306F\u308F\u304B\u3089\u306A\u3044\u3088\u3002";
