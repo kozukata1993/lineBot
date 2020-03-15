@@ -1,4 +1,4 @@
-import { createPushMessage } from "./message";
+import { createPush } from "./messages/push";
 
 const accessToken: string = PropertiesService.getScriptProperties().getProperty(
   "LINE_ACCESS_TOKEN"
@@ -17,7 +17,7 @@ export const pushMessage = () => {
   const postDatas = {
     messages: [
       {
-        text: createPushMessage(),
+        text: createPush(),
         type: "text",
       },
     ],

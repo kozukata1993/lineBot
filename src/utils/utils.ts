@@ -9,7 +9,7 @@ export const forecasts = (date: Date = new Date()): string => {
   url = `${url}${latitude},${longitude}${queryParams}`;
 
   const json = JSON.parse(UrlFetchApp.fetch(url).getContentText());
-  const dateIndex: number = getDateIndex(date);
+  const dateIndex: number = getDateIndex(new Date(), date);
   const forecast = json.daily.data[dateIndex];
   let result: string = "";
 
@@ -29,8 +29,7 @@ export const forecasts = (date: Date = new Date()): string => {
   return result;
 };
 
-export const getDateIndex = (date: Date) => {
-  const today = new Date();
+export const getDateIndex = (today: Date = new Date(), date: Date) => {
   const a =
     today.getFullYear() * 366 + (today.getMonth() + 1) * 31 + today.getDate();
   const b =
