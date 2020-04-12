@@ -151,6 +151,74 @@ global.testFunction = function () {
 
 /***/ }),
 
+/***/ "./src/messages/createPush.ts":
+/*!************************************!*\
+  !*** ./src/messages/createPush.ts ***!
+  \************************************/
+/*! exports provided: createPush */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createPush", function() { return createPush; });
+var createPush = function (today) {
+    if (today === void 0) { today = new Date(); }
+    // today: Date = new Date();
+    var day = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][today.getDay()];
+    var date = today.getDate();
+    if (day === "tue" || day === "fri") {
+        return "今日は燃えるゴミの日だよ";
+    }
+    else if (day === "sat") {
+        return "今日は資源ゴミの日だよ";
+    }
+    else if ((day === "thu" && date >= 8 && date <= 14) ||
+        (day === "thu" && date >= 22 && date <= 28)) {
+        return "今日はペットボトルを捨てる日だよ";
+    }
+    else {
+        return "今日はゴミを捨てる日じゃないよ";
+    }
+};
+
+
+/***/ }),
+
+/***/ "./src/messages/createReply.ts":
+/*!*************************************!*\
+  !*** ./src/messages/createReply.ts ***!
+  \*************************************/
+/*! exports provided: createReply */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createReply", function() { return createReply; });
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/utils */ "./src/utils/utils.ts");
+/* harmony import */ var _dialogflow__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dialogflow */ "./src/messages/dialogflow.ts");
+/* harmony import */ var _createPush__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./createPush */ "./src/messages/createPush.ts");
+
+
+
+var createReply = function (userMessage) {
+    var queryResult = new _dialogflow__WEBPACK_IMPORTED_MODULE_1__["Dialogflow"](userMessage).postQuery();
+    var intent = queryResult.intent.displayName;
+    var date = Object(_utils_utils__WEBPACK_IMPORTED_MODULE_0__["createDate"])(queryResult.parameters.date);
+    var lngs = Object(_utils_utils__WEBPACK_IMPORTED_MODULE_0__["checkLanguage"])(userMessage);
+    // return LanguageApp.translate(userMessage, lngs[0], lngs[1]);
+    switch (intent) {
+        case "trash":
+            return Object(_createPush__WEBPACK_IMPORTED_MODULE_2__["createPush"])();
+        case "weather":
+            return Object(_utils_utils__WEBPACK_IMPORTED_MODULE_0__["forecasts"])(date);
+        default:
+            return LanguageApp.translate(userMessage, lngs[0], lngs[1]);
+    }
+};
+
+
+/***/ }),
+
 /***/ "./src/messages/dialogflow.ts":
 /*!************************************!*\
   !*** ./src/messages/dialogflow.ts ***!
@@ -165,9 +233,7 @@ var scriptProperties = PropertiesService.getScriptProperties();
 var dfUrlFormat = scriptProperties.getProperty("DF_URL_FORMAT");
 var Dialogflow = /** @class */ (function () {
     function Dialogflow(message) {
-        this.sessionID = Math.random()
-            .toString(32)
-            .substring(2);
+        this.sessionID = Math.random().toString(32).substring(2);
         this.message = message;
     }
     Dialogflow.prototype.postQuery = function () {
@@ -209,74 +275,6 @@ var getAccessToken = function () {
 
 /***/ }),
 
-/***/ "./src/messages/push.ts":
-/*!******************************!*\
-  !*** ./src/messages/push.ts ***!
-  \******************************/
-/*! exports provided: createPush */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createPush", function() { return createPush; });
-var createPush = function (today) {
-    if (today === void 0) { today = new Date(); }
-    // today: Date = new Date();
-    var day = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][today.getDay()];
-    var date = today.getDate();
-    if (day === "tue" || day === "fri") {
-        return "今日は燃えるゴミの日だよ";
-    }
-    else if (day === "sat") {
-        return "今日は資源ゴミの日だよ";
-    }
-    else if ((day === "thu" && date >= 8 && date <= 14) ||
-        (day === "thu" && date >= 22 && date <= 28)) {
-        return "今日はペットボトルを捨てる日だよ";
-    }
-    else {
-        return "今日はゴミを捨てる日じゃないよ";
-    }
-};
-
-
-/***/ }),
-
-/***/ "./src/messages/reply.ts":
-/*!*******************************!*\
-  !*** ./src/messages/reply.ts ***!
-  \*******************************/
-/*! exports provided: createReply */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createReply", function() { return createReply; });
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/utils */ "./src/utils/utils.ts");
-/* harmony import */ var _dialogflow__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dialogflow */ "./src/messages/dialogflow.ts");
-/* harmony import */ var _messages_push__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../messages/push */ "./src/messages/push.ts");
-
-
-
-var createReply = function (userMessage) {
-    var queryResult = new _dialogflow__WEBPACK_IMPORTED_MODULE_1__["Dialogflow"](userMessage).postQuery();
-    var intent = queryResult.intent.displayName;
-    var date = Object(_utils_utils__WEBPACK_IMPORTED_MODULE_0__["createDate"])(queryResult.parameters.date);
-    var lngs = Object(_utils_utils__WEBPACK_IMPORTED_MODULE_0__["checkLanguage"])(userMessage);
-    // return LanguageApp.translate(userMessage, lngs[0], lngs[1]);
-    switch (intent) {
-        case "trash":
-            return Object(_messages_push__WEBPACK_IMPORTED_MODULE_2__["createPush"])();
-        case "weather":
-            return Object(_utils_utils__WEBPACK_IMPORTED_MODULE_0__["forecasts"])(date);
-        default:
-            return LanguageApp.translate(userMessage, lngs[0], lngs[1]);
-    }
-};
-
-
-/***/ }),
-
 /***/ "./src/push.ts":
 /*!*********************!*\
   !*** ./src/push.ts ***!
@@ -287,7 +285,7 @@ var createReply = function (userMessage) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pushMessage", function() { return pushMessage; });
-/* harmony import */ var _messages_push__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./messages/push */ "./src/messages/push.ts");
+/* harmony import */ var _messages_createPush__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./messages/createPush */ "./src/messages/createPush.ts");
 
 var accessToken = PropertiesService.getScriptProperties().getProperty("LINE_ACCESS_TOKEN");
 var userId = PropertiesService.getScriptProperties().getProperty("MY_ID");
@@ -300,7 +298,7 @@ var pushMessage = function () {
     var postDatas = {
         messages: [
             {
-                text: Object(_messages_push__WEBPACK_IMPORTED_MODULE_0__["createPush"])(),
+                text: Object(_messages_createPush__WEBPACK_IMPORTED_MODULE_0__["createPush"])(),
                 type: "text",
             },
         ],
@@ -327,7 +325,7 @@ var pushMessage = function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reply", function() { return reply; });
-/* harmony import */ var _messages_reply__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./messages/reply */ "./src/messages/reply.ts");
+/* harmony import */ var _messages_createReply__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./messages/createReply */ "./src/messages/createReply.ts");
 
 var reply = function (e) {
     var accessToken = PropertiesService.getScriptProperties().getProperty("LINE_ACCESS_TOKEN");
@@ -342,7 +340,7 @@ var reply = function (e) {
     var postDatas = {
         messages: [
             {
-                text: Object(_messages_reply__WEBPACK_IMPORTED_MODULE_0__["createReply"])(userMessage),
+                text: Object(_messages_createReply__WEBPACK_IMPORTED_MODULE_0__["createReply"])(userMessage),
                 // text: `${userMessage}!!`,
                 type: "text",
             },
@@ -400,8 +398,7 @@ var getDateIndex = function (today, date) {
     return b - a >= 0 && b - a <= 7 ? b - a : 8;
 };
 var createDate = function (dateString) {
-    if (dateString === void 0) { dateString = new Date().getFullYear() + "-" + (new Date().getMonth() +
-        1) + "-" + new Date().getDate(); }
+    if (dateString === void 0) { dateString = new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate(); }
     var regexp = /\d{4}-\d{1,2}-\d{1,2}/g;
     var tmpArray = dateString.match(regexp)[0].split("-");
     var dateArray = tmpArray.map(function (str) { return +str; });

@@ -7,7 +7,7 @@
     "lint": "yarn eslint --fix ./src/*.ts",
     "test": "jest --coverage",
     "dev": "yarn webpack",
-    "build": "yarn webpack && clasp push"
+    "build": "yarn webpack --fix && clasp push"
   },
   "devDependencies": {
     "@types/google-apps-script": "1.0.11",

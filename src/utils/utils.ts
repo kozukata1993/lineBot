@@ -38,12 +38,13 @@ export const getDateIndex = (today: Date = new Date(), date: Date) => {
 };
 
 export const createDate = (
-  dateString: string = `${new Date().getFullYear()}-${new Date().getMonth() +
-    1}-${new Date().getDate()}`
+  dateString: string = `${new Date().getFullYear()}-${
+    new Date().getMonth() + 1
+  }-${new Date().getDate()}`
 ) => {
   const regexp = /\d{4}-\d{1,2}-\d{1,2}/g;
   const tmpArray = dateString.match(regexp)[0].split("-");
-  const dateArray: number[] = tmpArray.map(str => +str);
+  const dateArray: number[] = tmpArray.map((str) => +str);
   return new Date(dateArray[0], dateArray[1] - 1, dateArray[2]);
 };
 
