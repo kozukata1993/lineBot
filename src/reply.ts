@@ -1,4 +1,4 @@
-import { createReply } from "./messages/reply";
+import { createReply } from "./messages/createReply";
 
 export const reply = (e: any) => {
   const accessToken: string = PropertiesService.getScriptProperties().getProperty(

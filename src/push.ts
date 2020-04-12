@@ -1,4 +1,4 @@
-import { createPush } from "./messages/push";
+import { createPush } from "./messages/createPush";
 
 const accessToken: string = PropertiesService.getScriptProperties().getProperty(
   "LINE_ACCESS_TOKEN"

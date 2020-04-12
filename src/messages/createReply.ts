@@ -1,6 +1,6 @@
 import { checkLanguage, createDate, forecasts } from "../utils/utils";
 import { Dialogflow } from "./dialogflow";
-import { createPush } from "../messages/push";
+import { createPush } from "./createPush";
 
 export const createReply = (userMessage: string): string => {
   const queryResult = new Dialogflow(userMessage).postQuery();
