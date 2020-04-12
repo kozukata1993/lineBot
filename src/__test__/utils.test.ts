@@ -1,4 +1,4 @@
-import { getDateIndex, createDate, checkLanguage } from "../src/utils/utils";
+import { getDateIndex, createDate, checkLanguage } from "../utils/utils";
 
 describe("getDateIndex", () => {
   it("Should be 8", () => {
