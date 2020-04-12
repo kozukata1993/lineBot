@@ -1,4 +1,4 @@
-import { createPush } from "../src/messages/push";
+import { createPush } from "../messages/push";
 
 describe(createPush, () => {
   it("Combustible garbage", () => {
